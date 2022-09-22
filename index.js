@@ -156,6 +156,18 @@ const CreateUI = function () {
         document.getElementsByClassName("questionList")[db.getCurrentSubject()].getElementsByTagName("li")[db.getCurrentQuestion()].classList.add("currentQuestion");
     }
     
+    const refreshMarkBtn = function (sid, qid) {
+        
+        if(db.isQuestionMarked(sid, qid)) {
+        
+            document.getElementById("markBtn").innerHTML = '<i class="fa-solid fa-bookmark" style="color: #e68a00"></i> Marked';
+        }
+        else {
+            
+            document.getElementById("markBtn").innerHTML = '<i class="fa-regular fa-bookmark"></i> Mark';
+        }
+    }
+    
     const internalUpdateQuestion = function (question) {
         
         const questionEL = document.getElementsByClassName("question")[0];
@@ -188,6 +200,7 @@ const CreateUI = function () {
         internalUpdateQuestion(question);
         internalUpdateOptions(question)
         refreshCurQuestionMarker(sid, qid);
+        refreshMarkBtn(sid, qid);
     };
     
     this.addSubject = function (subject) {
@@ -235,7 +248,9 @@ const CreateUI = function () {
     
     this.markQuestion = function () {
         
-        document.getElementsByClassName("questionList")[db.getCurrentSubject()].getElementsByTagName("li")[db.getCurrentQuestion()].classList.add("markedQuestion"); 
+        document.getElementsByClassName("questionList")[db.getCurrentSubject()].getElementsByTagName("li")[db.getCurrentQuestion()].classList.add("markedQuestion");
+        
+        refreshMarkBtn(db.getCurrentSubject(), db.getCurrentQuestion());
         
         updateMetaData();
     };
@@ -243,6 +258,8 @@ const CreateUI = function () {
     this.unmarkQuestion = function () {
         
         document.getElementsByClassName("questionList")[db.getCurrentSubject()].getElementsByTagName("li")[db.getCurrentQuestion()].classList.remove("markedQuestion"); 
+        
+        refreshMarkBtn(db.getCurrentSubject(), db.getCurrentQuestion());
         
         updateMetaData();
     };
@@ -259,11 +276,60 @@ const CreateUI = function () {
     }
 }
 
+const previousQuestion = function () {
+    
+    let sid = db.getCurrentSubject();
+    const qid = db.getCurrentQuestion();
+    const numSub = db.getNumSubject();
+    let numQue = db.getNumQuestion(sid);
+    
+    if(qid > 0) {
+        
+        ui.updateQuestion(sid, qid - 1);
+    }
+    else if(sid > 0) {
+        
+        sid = sid - 1;
+        numQue = db.getNumQuestion(sid);
+
+        ui.updateQuestion(sid, numQue - 1);
+    }
+}
+
+const nextQuestion = function () {
+    
+    const sid = db.getCurrentSubject();
+    const qid = db.getCurrentQuestion();
+    const numSub = db.getNumSubject();
+    const numQue = db.getNumQuestion(sid);
+    
+    if(qid < numQue - 1)
+        ui.updateQuestion(sid, qid + 1);
+    else if(sid < numSub - 1)
+        ui.updateQuestion(sid + 1, 0);
+}
+
+const toggleQuestion = function (event) {
+    
+    if(event.target.tagName !== 'INPUT') {
+        
+        switch(event.key) {
+
+            case "ArrowLeft":
+                previousQuestion();
+                break;
+            case "ArrowRight":
+               nextQuestion();
+                break;
+        }
+    }
+}
+
 const answerQuestion = function (event) {
     
     const oid = Number(event.target.id.replace(/[^0-9]/g,'')) - 1;
     db.setAnswer(oid);
-    ui.answerQuestion();  // wrap this in controller: update db then ui
+    ui.answerQuestion();
 }
 
 const clearQuestion = function () {
@@ -273,6 +339,13 @@ const clearQuestion = function () {
 }
 
 const markQuestion = function () {
+    
+    if (db.isQuestionMarked(db.getCurrentSubject(), db.getCurrentQuestion())) {
+        
+        db.markQuestion(false);
+        ui.unmarkQuestion();
+        return;
+    }
     
     db.markQuestion(true);
     ui.markQuestion();
@@ -328,19 +401,35 @@ const createQuestionList = function (questions) {
 
 const db = new CreateDB(data);
 const ui = new CreateUI();
+
+const enableEvents = function () {
     
-for (let i = 0; i < db.getNumSubject(); i++)
-    ui.addSubject (db.getSubject(i));
+    const optionsEL = document.getElementsByClassName("options")[0].getElementsByTagName("input");
     
-ui.updateQuestion(db.getCurrentSubject(), db.getCurrentQuestion());
+    for (let i = 0; i < 4; i++)
+        optionsEL[i].addEventListener("click", answerQuestion);
+
+    document.getElementById("clearBtn").addEventListener("click", clearQuestion);
+
+    document.getElementById("markBtn").addEventListener("click", markQuestion);
     
-const optionsEL = document.getElementsByClassName("options")[0].getElementsByTagName("input");
+    document.getElementById("previousBtn").addEventListener("click", previousQuestion);
     
-for (let i = 0; i < 4; i++)
-    optionsEL[i].addEventListener("click", answerQuestion);
+    document.getElementById("nextBtn").addEventListener("click", nextQuestion);
     
-document.getElementById("clearBtn").addEventListener("click", clearQuestion);
+    document.addEventListener("keydown", toggleQuestion);
+}
+
+const init = function () {
     
-document.getElementById("markBtn").addEventListener("click", markQuestion);
+    for (let i = 0; i < db.getNumSubject(); i++)
+        ui.addSubject (db.getSubject(i));
+    
+    ui.updateQuestion(db.getCurrentSubject(), db.getCurrentQuestion());
+    
+    enableEvents();
+}
+
+init();
 
 })();
