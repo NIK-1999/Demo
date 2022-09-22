@@ -220,3 +220,37 @@ body, html {
 .markedQuestion > a {
     background: #ffebcc;
 }
+
+/* home page styling */
+
+#popup {
+    //padding: 2%;
+    background: #fff;
+    box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.1);
+    width: 40%;
+    height: 10%;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#popup > h2 {
+    color: #04aa6d;
+    margin: auto;
+}
+
+#popup > button {
+    border: none;
+    color: #fff;
+    background: #04aa6d;
+    padding: 2% 4%;
+}
+
+#popup i {
+    margin-left: 5px;
+    color: #fff;
+}

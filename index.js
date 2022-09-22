@@ -1,7 +1,7 @@
 import data from './data.json' assert {type : "json"};
 
 (function () {
-
+    
 const CreateDB = function (val) {
     
     const db = {
@@ -147,6 +147,17 @@ const CreateDB = function (val) {
 
 const CreateUI = function () {
     
+    const updateMetaData = function () {
+        
+        const sid = db.getCurrentSubject();
+        
+        const metaData = document.querySelectorAll(".questionMetaData > li > span");
+        
+        metaData[(sid * 3) + 0].innerHTML = " " + db.getAnsweredQuestion(sid) + " ";
+        metaData[(sid * 3) + 1].innerHTML = " " + db.getMarkedQuestion(sid) + " ";
+        metaData[(sid * 3) + 2].innerHTML = " " + db.getUnAnsweredQuestion(sid) + " ";
+    }
+    
     const refreshCurQuestionMarker = function (sid, qid) {
         
         document.getElementsByClassName("questionList")[db.getCurrentSubject()].getElementsByTagName("li")[db.getCurrentQuestion()].classList.remove("currentQuestion");
@@ -264,16 +275,42 @@ const CreateUI = function () {
         updateMetaData();
     };
     
-    const updateMetaData = function () {
+    this.refreshTime = function (h, m , s) {
         
-        const sid = db.getCurrentSubject();
+        let res = ((h < 10) ? ('0' + h) : (h)) + " : " + ((m < 10) ? ('0' + m) : (m)) + " : " +((s < 10) ? ('0' + s) : (s));
         
-        const metaData = document.querySelectorAll(".questionMetaData > li > span");
-        
-        metaData[(sid * 3) + 0].innerHTML = " " + db.getAnsweredQuestion(sid) + " ";
-        metaData[(sid * 3) + 1].innerHTML = " " + db.getMarkedQuestion(sid) + " ";
-        metaData[(sid * 3) + 2].innerHTML = " " + db.getUnAnsweredQuestion(sid) + " ";
+        document.getElementById("timer").innerHTML = res;
     }
+}
+
+const CreateTimer = function (time) {
+    
+    const limit = (time * 3600) + 1;
+    let start;
+    let interval;
+    let remainingTime;
+    
+    this.start = function () {
+        
+        start = new Date().getTime();
+    };
+    
+    this.updateTime = function () {
+        
+        interval = Math.floor(((new Date().getTime() - start) % (3600 * 24)) / 1000);
+        
+        remainingTime = limit - interval;
+        
+        let temp = remainingTime;
+        
+        const h = Math.floor(temp / 3600);
+        temp %= 3600;
+        const m = Math.floor(temp / 60);
+        temp %= 60;
+        const s = temp;
+        
+        ui.refreshTime(h, m, s);
+    };
 }
 
 const previousQuestion = function () {
@@ -399,9 +436,6 @@ const createQuestionList = function (questions) {
     return ul;
 }
 
-const db = new CreateDB(data);
-const ui = new CreateUI();
-
 const enableEvents = function () {
     
     const optionsEL = document.getElementsByClassName("options")[0].getElementsByTagName("input");
@@ -422,13 +456,21 @@ const enableEvents = function () {
 
 const init = function () {
     
+    timer.start();
+    
     for (let i = 0; i < db.getNumSubject(); i++)
         ui.addSubject (db.getSubject(i));
     
     ui.updateQuestion(db.getCurrentSubject(), db.getCurrentQuestion());
     
     enableEvents();
+    
+    setInterval(timer.updateTime, 1000);
 }
+
+const db = new CreateDB(data.data);
+const ui = new CreateUI();
+const timer = new CreateTimer(data.time);
 
 init();
 
