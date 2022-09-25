@@ -14,8 +14,7 @@
                 "12,130 K",
                 "101,300 K"
               ],
-              "correctIndex": 1,
-                isAnswer
+              "correctIndex": 1
             },
             {
               "question": "Who are the actors in The Internship?",
@@ -97,7 +96,7 @@
               ],
               "correctIndex": 1
             }
-          ],
+          ]
         },
 
         {
