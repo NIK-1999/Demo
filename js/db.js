@@ -98,6 +98,29 @@ export default function CreateDB () {
         
         return this.getNumberOfQuestion(subID) - this.getAnsweredQuestion(subID);
     }
+    
+    this.getScore = function () {
+        
+        const score = [];
+        
+        store.data.forEach((item, i) => {
+           
+            score[i] = {};
+            score[i].title = item.title;
+            score[i].totalQuestions = this.getNumberOfQuestion(i);
+            
+            score[i].correctQuestions = item.questions.reduce(function (pre, cur) {
+                
+                if(cur.selectedAnswer === cur.correctAnswer)
+                    pre++;
+                
+                return pre;
+            }, 0);
+            
+        });
+        
+        return score;
+    }
         
     for(let i = 0; i < this.getNumberOfSubject(); i++) {
 

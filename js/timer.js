@@ -3,7 +3,7 @@ export default function CreateTimer (duration) {
     let start;
     let interval;
     let remainingTime;
-    const limit = (duration * 3600) + 1;
+    const limit = duration;
     
     const time = {
         

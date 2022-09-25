@@ -89,4 +89,10 @@ export default function createEventHandler (db, ui) {
             optionsEL[i].addEventListener("click", this.answerQuestion);
         
     };
+    
+    this.endTest = function () {
+        
+        const score = db.getScore();
+        ui.showScoreCard(score);
+    }
 }

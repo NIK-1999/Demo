@@ -38,7 +38,7 @@ export default function CreateUI (db, timer) {
         
         document.getElementsByClassName("question")[0].replaceWith(createQuestion(question));
         
-        document.getElementsByClassName("options")[0].replaceWith(createOptions(question.answers));
+        document.getElementsByClassName("options")[0].replaceWith(createOptions(question.selectedAnswer, question.answers));
     
         refreshCurQuestionMarker(sid, qid);
         refreshMarkBtn(sid, qid);
@@ -86,9 +86,15 @@ export default function CreateUI (db, timer) {
         updateMetaData();
     };
     
-    this.refreshTime = function () {
+    this.refreshTime = () => {
         
         const time = timer.getRemainingTime();
+        
+        if(time.seconds < 0) {
+            this.showScoreCard(db.getScore());
+            return;
+        }
+        
         const h = (time.hours < 10) ? ('0' + time.hours) : (time.hours);
         const m = (time.minutes < 10) ? ('0' + time.minutes) : (time.minutes);
         const s = (time.seconds < 10) ? ('0' + time.seconds) : (time.seconds);
@@ -97,9 +103,18 @@ export default function CreateUI (db, timer) {
         
         document.getElementById("timer").innerHTML = res;
     }
+    
+    this.showScoreCard = function (score) {
+        
+        document.getElementsByClassName("result")[0].replaceWith(createScoreCard(score));
+        
+        document.getElementsByClassName("result")[0].style.visibility = "visible";
+        
+        clearInterval(window.timerId);
+    }
 }
 
-const createOptions = function (options) {
+const createOptions = function (selectedAnswer, options) {
     
     const div = document.createElement("div");
     
@@ -112,6 +127,9 @@ const createOptions = function (options) {
         input.type = "radio";
         input.name = "option";
         input.dataset.optionNumber = index + 1;
+        
+        if(selectedAnswer === index)
+            input.checked = true;
         
         span.innerHTML = item;
         
@@ -200,4 +218,56 @@ const createQuestionList = function (sid, questions) {
     ul.className = "questionList";
     
     return ul;
+}
+
+const createScoreCard = function (score) {
+    
+    const parentDiv = document.createElement("div");
+    const childDiv = document.createElement("div");
+    const h2 = document.createElement("h2");
+    const hr = document.createElement("hr");
+    
+    let overallCorrectQuestions = 0;
+    let overallQuections = 0;
+    
+    h2.innerHTML = "Score Card";
+    
+    childDiv.appendChild(h2);
+    
+    score.forEach(function (item, i) {
+       
+        const section = document.createElement("section");
+        const p = document.createElement("p");
+        const span = document.createElement("span");
+        
+        p.innerHTML = item.title;
+        span.innerHTML = `${score[i].correctQuestions}/${score[i].totalQuestions}`;
+        
+        overallCorrectQuestions += score[i].correctQuestions;
+        overallQuections += score[i].totalQuestions;
+        
+        section.appendChild(p);
+        section.appendChild(span);
+        
+        childDiv.appendChild(section);
+    });
+    
+    childDiv.appendChild(hr);
+    
+    const section = document.createElement("section");
+    const p = document.createElement("p");
+    const span = document.createElement("span");
+
+    p.innerHTML = "Total";
+    span.innerHTML = `${overallCorrectQuestions}/${overallQuections}`;
+
+    section.appendChild(p);
+    section.appendChild(span);
+
+    childDiv.appendChild(section);
+    
+    parentDiv.appendChild(childDiv);
+    parentDiv.className = "result";
+    
+    return parentDiv;
 }

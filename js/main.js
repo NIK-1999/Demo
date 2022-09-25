@@ -29,6 +29,8 @@ const enableEvents = function () {
     document.getElementById("nextBtn").addEventListener("click", eventHandler.nextQuestion);
     
     document.addEventListener("keydown", eventHandler.toggleQuestion);
+    
+    document.getElementById("endTestBtn").addEventListener("click", eventHandler.endTest);
 }
 
 const init = function () {
@@ -42,7 +44,7 @@ const init = function () {
     
     enableEvents();
     
-    setInterval(ui.refreshTime, 1000);
+    return setInterval(ui.refreshTime, 1000);
 }
 
-init();
+window.timerId = init();
