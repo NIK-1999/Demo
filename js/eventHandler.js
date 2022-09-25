@@ -4,8 +4,8 @@ export default function createEventHandler (db, ui) {
 
         let sid = db.getCurrentSubject();
         const qid = db.getCurrentQuestion();
-        const numSub = db.getNumSubject();
-        let numQue = db.getNumQuestion(sid);
+        const numSub = db.getNumberOfSubject();
+        let numQue = db.getNumberOfQuestion(sid);
 
         if(qid > 0) {
 
@@ -14,7 +14,7 @@ export default function createEventHandler (db, ui) {
         else if(sid > 0) {
 
             sid = sid - 1;
-            numQue = db.getNumQuestion(sid);
+            numQue = db.getNumberOfQuestion(sid);
 
             ui.updateQuestion(sid, numQue - 1);
         }
@@ -24,8 +24,8 @@ export default function createEventHandler (db, ui) {
 
         const sid = db.getCurrentSubject();
         const qid = db.getCurrentQuestion();
-        const numSub = db.getNumSubject();
-        const numQue = db.getNumQuestion(sid);
+        const numSub = db.getNumberOfSubject();
+        const numQue = db.getNumberOfQuestion(sid);
 
         if(qid < numQue - 1)
             ui.updateQuestion(sid, qid + 1);
@@ -34,8 +34,8 @@ export default function createEventHandler (db, ui) {
     };
 
     this.toggleQuestion = (event) => {
-
-        if(event.target.tagName !== 'INPUT') {
+        
+        if(!event.target.id || !event.target.id.includes('option')) {
 
             switch(event.key) {
 
@@ -50,8 +50,9 @@ export default function createEventHandler (db, ui) {
     };
 
     this.answerQuestion = function (event) {
-
-        const oid = Number(event.target.id.replace(/[^0-9]/g,'')) - 1;
+        
+        const oid = event.target.dataset.optionNumber - 1;
+        
         db.setAnswer(oid);
         ui.answerQuestion();
     };
@@ -75,14 +76,17 @@ export default function createEventHandler (db, ui) {
         ui.markQuestion();
     };
 
-    this.refreshQuestion = function (event) {
-
-        if(event.target.tagName === "A") {
-
-            const sid = Number(event.target.closest(".sub").id.replace(/[^0-9]/g, ''));
-            const qid = Number(event.target.innerHTML) - 1;
-
-            ui.updateQuestion(sid, qid);
-        }
+    this.refreshQuestion = (event) => {
+        
+        const dataset = event.target.dataset;
+        
+        if(('subjectId' in dataset) && ('questionId' in dataset))
+            ui.updateQuestion(Number(dataset.subjectId), Number(dataset.questionId));
+        
+        const optionsEL = document.getElementsByClassName("options")[0].getElementsByTagName("input");
+        
+        for (let i = 0; i < 4; i++)
+            optionsEL[i].addEventListener("click", this.answerQuestion);
+        
     };
 }

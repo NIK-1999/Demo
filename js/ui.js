@@ -32,63 +32,21 @@ export default function CreateUI (db, timer) {
         }
     }
     
-    const internalUpdateQuestion = function (question) {
-        
-        const questionEL = document.getElementsByClassName("question")[0];
-        
-        questionEL.getElementsByTagName("h4")[0].innerHTML = `Question${question.id + 1}`;
-        
-        questionEL.getElementsByTagName("p")[0].innerHTML = question.question;
-    }
-    
-    const internalUpdateOptions = function (question) {
-        
-        const optionsEL = document.getElementsByClassName("options")[0].getElementsByTagName("label");
-        
-        for(let i = 0; i < optionsEL.length; i++) {
-            
-            optionsEL[i].getElementsByTagName("span")[0].innerHTML = question.answers[i];
-            
-            optionsEL[i].getElementsByTagName("input")[0].checked = false;
-        }
-        
-        if(question.selectedIndex !== -1) {
-            optionsEL[question.selectedIndex].getElementsByTagName("input")[0].checked = true;
-        }
-    }
-    
     this.updateQuestion = function (sid, qid) {
         
         const question = db.getQuestion(sid, qid);
         
-        internalUpdateQuestion(question);
-        internalUpdateOptions(question)
+        document.getElementsByClassName("question")[0].replaceWith(createQuestion(question));
+        
+        document.getElementsByClassName("options")[0].replaceWith(createOptions(question.answers));
+    
         refreshCurQuestionMarker(sid, qid);
         refreshMarkBtn(sid, qid);
     };
     
     this.addSubject = function (subject) {
         
-        const testData = document.getElementsByClassName("testData")[0];
-    
-        const section = document.createElement("section");
-        const title = document.createElement("h3");
-        const instruction = document.createElement("small");
-        const metaData = createQuestionMetaData();
-        const list = createQuestionList(subject.questions);
-
-        title.innerHTML = subject.title;
-        instruction.innerHTML = "Attempt All";
-
-        section.appendChild(title);
-        section.appendChild(instruction);
-        section.appendChild(metaData);
-        section.appendChild(list);
-
-        section.className = "sub";
-        section.id = `sub${subject.id}`;
-
-        testData.appendChild(section);
+        document.getElementsByClassName("testData")[0].appendChild(createSubject(subject));
     };
     
     this.answerQuestion = function () {
@@ -141,6 +99,74 @@ export default function CreateUI (db, timer) {
     }
 }
 
+const createOptions = function (options) {
+    
+    const div = document.createElement("div");
+    
+    options.forEach(function (item, index) {
+        
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        const span = document.createElement("span");
+        
+        input.type = "radio";
+        input.name = "option";
+        input.dataset.optionNumber = index + 1;
+        
+        span.innerHTML = item;
+        
+        label.appendChild(input);
+        label.appendChild(span);
+        
+        div.appendChild(label);
+    });
+    
+    div.className = "options";
+
+    return div;
+}
+
+const createQuestion = function (question) {
+    
+    const parentDiv = document.createElement("div");
+    const childDiv = document.createElement("div");
+    const h4 = document.createElement("h4");
+    const small = document.createElement("small");
+    const p = document.createElement("p");
+    
+    h4.innerHTML = `Question${question.id + 1}`;
+    small.innerHTML = "<a href='#'>Report</a>";
+    p.innerHTML = question.question;
+    
+    childDiv.appendChild(h4);
+    childDiv.appendChild(small);
+    
+    parentDiv.appendChild(childDiv);
+    parentDiv.appendChild(p);
+    parentDiv.className = "question";
+    
+    return parentDiv;
+}
+
+const createSubject = function (subject) {
+    
+    const section = document.createElement("section");
+    const title = document.createElement("h3");
+    const instruction = document.createElement("small");
+    const metaData = createQuestionMetaData();
+    const list = createQuestionList(subject.id, subject.questions);
+
+    title.innerHTML = subject.title;
+    instruction.innerHTML = "Attempt All";
+
+    section.appendChild(title);
+    section.appendChild(instruction);
+    section.appendChild(metaData);
+    section.appendChild(list);
+    
+    return section;
+}
+
 const createQuestionMetaData = function () {
     
     const ul = document.createElement("ul");
@@ -161,17 +187,16 @@ const createQuestionMetaData = function () {
     return ul;
 }
 
-const createQuestionList = function (questions) {
+const createQuestionList = function (sid, questions) {
     
     const ul = document.createElement("ul");
     
     for(let i = 0; i < questions.length; i++) {
         
         const li = document.createElement("li");
-        li.innerHTML = `<a href="#">${i+1}</a>`;
+        li.innerHTML = `<a href="#" data-subject-id="${sid}" data-question-id="${i}">${i+1}</a>`;
         ul.appendChild(li);
     }
-    
     ul.className = "questionList";
     
     return ul;

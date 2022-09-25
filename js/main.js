@@ -14,10 +14,12 @@ const enableEvents = function () {
     
     for (let i = 0; i < 4; i++)
         optionsEL[i].addEventListener("click", eventHandler.answerQuestion);
+    
     document.querySelectorAll(".questionList").forEach(function (item) {
         
         item.addEventListener("click", eventHandler.refreshQuestion);
     });
+    
     document.getElementById("clearBtn").addEventListener("click", eventHandler.clearQuestion);
 
     document.getElementById("markBtn").addEventListener("click", eventHandler.markQuestion);
@@ -33,7 +35,7 @@ const init = function () {
     
     timer.start();
     
-    for (let i = 0; i < db.getNumSubject(); i++)
+    for (let i = 0; i < db.getNumberOfSubject(); i++)
         ui.addSubject (db.getSubject(i));
     
     ui.updateQuestion(db.getCurrentSubject(), db.getCurrentQuestion());
