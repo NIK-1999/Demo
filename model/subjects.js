@@ -1,6 +1,71 @@
 import data from '../data/data.json' assert {type : "json"};
 
-export default function CreateDB () {
+const subjects = {
+    
+    init: function () {
+      
+        this.list = [];
+        
+        data.subjects.forEach((subject, index) => {
+            
+            this.list.push(new Subject(subject, index));
+        });
+        
+        this.currentQuestion = this.list[0].questions[0];
+        this.duration = data.duration;
+    },
+    
+    getScore: function () {
+        
+        const score = [];
+        
+        this.list.forEach((subject, index) => {
+           
+            score[index] = {};
+            score[index].title = subject.title;
+            score[index].totalQuestions = this.list[index].questions.length;
+            
+            score[index].correctQuestions = subject.questions.reduce(function (pre, cur) {
+                
+                if(cur.selectedAnswer === cur.correctAnswer)
+                    pre++;
+                
+                return pre;
+            }, 0);
+            
+        });
+        
+        return score;
+    }
+};
+
+function Subject (subject, id) {
+    
+    this.id = id;
+    this.title = subject.title;
+    this.questions = [];
+    
+    subject.questions.forEach((question, index) => {
+        
+        this.questions.push(new Question(this.id, question, index));
+    });
+}
+
+function Question (subjectID, question, id) {
+    
+    this.id = id;
+    this.subjectID = subjectID;
+    this.question = question.question;
+    this.options = question.answers;
+    this.correctAnswer = question.correctAnswer;
+    this.selectedAnswer = -1;
+    this.isMarked = false;
+}
+
+export default subjects;
+
+/*
+function CreateDB () {
     
     const store = {
         
@@ -134,3 +199,4 @@ export default function CreateDB () {
         }
     }
 }
+*/

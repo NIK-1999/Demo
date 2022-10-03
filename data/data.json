@@ -1,7 +1,7 @@
 {
-    "time" : 70,
+    "duration" : 30,
     
-    "data" : [
+    "subjects" : [
     
         {
           "title": "Mathematics",
