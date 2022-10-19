@@ -1,0 +1,16 @@
+.container {
+  margin-bottom: 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.container > h2 {
+  margin: 0;
+  padding: 1%;
+  font-weight: lighter;
+  font-family: 'Comic Sans MS';
+  color: #fff;
+  background: #04aa6d;
+  box-shadow: 2px 2px 5px 2px #000;
+}

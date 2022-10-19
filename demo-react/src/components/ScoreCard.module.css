@@ -1,0 +1,38 @@
+.container {
+  /* visibility: hidden; */
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container > div {
+  width: 50%;
+  padding: 2%;
+  background: #fff;
+}
+
+.container > div > h2 {
+  padding: 2%;
+  font-weight: lighter;
+  font-family: 'Comic Sans MS';
+  color: #fff;
+  background: #04aa6d;
+  margin-top: 0;
+  text-align: center;
+}
+
+.container > div > section {
+  display: flex;
+  align-items: center;
+}
+
+.container > div > section > span {
+  margin-left: auto;
+}

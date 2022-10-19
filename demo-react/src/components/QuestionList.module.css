@@ -1,0 +1,37 @@
+.container {
+    margin: 10% 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.container > li {
+    margin: 1%;
+    width: 18%;
+    list-style-type: none;
+}
+
+.container a {
+    text-decoration: none;
+    box-sizing: border-box;
+    padding: 25% 0;
+    width: 100%;
+    text-align: center;
+    display: inline-block;
+    border-radius: 5px;
+    color: #aaa;
+    border: 1px solid #aaa;
+}
+
+.currentQuestion > a {
+    color: #000;
+    border: 1px solid #000;
+}
+
+.answeredQuestion > a {
+    background: #cdfeec;
+}
+
+.markedQuestion > a {
+    background: #ffebcc;
+}

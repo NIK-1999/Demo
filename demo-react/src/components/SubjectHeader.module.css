@@ -1,0 +1,8 @@
+.container > h3 {
+    margin: 0;
+}
+
+.container > small {
+    user-select: none;
+    color: #999;
+}
