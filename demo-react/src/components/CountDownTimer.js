@@ -1,22 +1,25 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { TimerContext } from '../App';
-import { EndTestContext } from '../App';
+import React, { useEffect, useRef, useState } from 'react';
 
-function Timer() {
-  const [duration, setDuration] = useState(useContext(TimerContext));
-  const { setTimerId, endTest } = useContext(EndTestContext);
+function CountDownTimer(props) {
+  const [duration, setDuration] = useState(props.duration);
+  const timerId = useRef();
 
   useEffect(() => {
     const tick = () => {
       setDuration((duration) => duration - 1);
     };
 
-    setTimerId(setInterval(tick, 1000));
+    timerId.current = setInterval(tick, 1000);
+    props.setTimerId(timerId.current);
+
+    return () => {
+      clearInterval(timerId.current);
+    };
   }, []);
 
   useEffect(() => {
     if (duration <= 0) {
-      endTest();
+      props.onTimeUp();
     }
   }, [duration]);
 
@@ -40,4 +43,4 @@ function Timer() {
   return <p>{remainingTime}</p>;
 }
 
-export default Timer;
+export default CountDownTimer;

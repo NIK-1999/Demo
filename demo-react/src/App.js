@@ -4,6 +4,7 @@ import styles from './App.module.css';
 import { createContext, useEffect, useReducer, useState } from 'react';
 import data from './data/data.json';
 import ScoreCard from './components/ScoreCard';
+import React from 'react';
 
 data.subjects.forEach((subject, subjectIndex) => {
   subject.questions.forEach((question, index) => {
@@ -13,10 +14,6 @@ data.subjects.forEach((subject, subjectIndex) => {
     question.isMarked = false;
   });
 });
-
-export const CurQuestionContext = createContext();
-export const TimerContext = createContext(data.duration);
-export const EndTestContext = createContext();
 
 const initialState = {
   subjectId: 0,
@@ -33,10 +30,12 @@ const reducer = (state, action) => {
     }
 
     case 'change': {
-      return {
-        subjectId: action.subjectId,
-        questionId: action.questionId,
-      };
+      if (action.subjectId !== subjectId || action.questionId !== questionId) {
+        return {
+          subjectId: action.subjectId,
+          questionId: action.questionId,
+        };
+      } else return state;
     }
 
     case 'next': {
@@ -122,19 +121,45 @@ function App() {
   };
 
   const endTest = () => {
-    setIsTestEnded(true);
     clearInterval(timerId);
+    setIsTestEnded(true);
+  };
+
+  const answerQuestion = (ans) => {
+    dispatch({
+      type: 'answer',
+      selectedAnswer: ans,
+    });
+  };
+
+  const changeQuestion = (question) => {
+    dispatch({
+      type: 'change',
+      subjectId: question.subjectId,
+      questionId: question.id,
+    });
   };
 
   return (
     <div className={styles.container}>
       {isTestEnded && <ScoreCard getScore={getScore} />}
-      <CurQuestionContext.Provider value={{ curQuestion, dispatch }}>
-        <EndTestContext.Provider value={{ setTimerId, endTest }}>
-          <Content />
-          <Sidebar subjects={data.subjects} />
-        </EndTestContext.Provider>
-      </CurQuestionContext.Provider>
+      <Content
+        curQuestion={curQuestion}
+        answerQuestion={answerQuestion}
+        previousQuestion={() => dispatch({ type: 'previous' })}
+        clearQuestion={() => dispatch({ type: 'clear' })}
+        markQuestion={() => dispatch({ type: 'mark' })}
+        nextQuestion={() => dispatch({ type: 'next' })}
+        testDuration={data.duration}
+        endTest={endTest}
+        setTimerId={setTimerId}
+      />
+      <Sidebar
+        subjects={data.subjects}
+        curQuestion={curQuestion}
+        changeQuestion={changeQuestion}
+        endTest={endTest}
+      />
     </div>
   );
 }

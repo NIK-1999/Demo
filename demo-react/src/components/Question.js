@@ -1,47 +1,30 @@
-import React, { useContext, useState } from 'react';
-import { CurQuestionContext } from '../App';
+import React from 'react';
 import styles from './Question.module.css';
 
-function Question() {
-  const { curQuestion, dispatch } = useContext(CurQuestionContext);
-  const [answer, setAnswer] = useState(-1);
-
-  const answerQuestion = (e) => {
-    const ans = Number(e.target.value);
-
-    if (curQuestion.selectedAnswer !== -1) {
-      curQuestion.selectedAnswer = ans;
-      setAnswer(ans);
-    } else {
-      dispatch({
-        type: 'answer',
-        selectedAnswer: ans,
-      });
-    }
-  };
+function Question(props) {
+  const { question, answerQuestion } = props;
 
   return (
     <>
       <div className={styles.question}>
         <div>
-          <h4>Question {curQuestion.id + 1}</h4>
+          <h4>Question {question.id + 1}</h4>
           <small>
             <a href='#'>Report</a>
           </small>
         </div>
-        <p>{curQuestion.question}</p>
+        <p>{question.question}</p>
       </div>
 
       <div className={styles.options}>
-        {curQuestion.answers.map((option, index) => {
+        {question.answers.map((option, index) => {
           return (
             <label key={index}>
               <input
-                value={index}
                 type='radio'
                 name='option'
-                checked={curQuestion.selectedAnswer === index}
-                onChange={answerQuestion}
+                checked={question.selectedAnswer === index}
+                onChange={() => answerQuestion(index)}
               />
               <span>{option}</span>
             </label>

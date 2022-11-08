@@ -4,7 +4,8 @@ import SubjectHeader from './SubjectHeader';
 import SubjectMetaData from './SubjectMetaData';
 
 function Subject(props) {
-  const { title, questions } = props.subject;
+  const { subject, ...other } = props;
+  const { title, questions } = subject;
 
   const getAnsweredQuestion = () => {
     return questions.reduce((pre, cur) => {
@@ -38,7 +39,7 @@ function Subject(props) {
     <section>
       <SubjectHeader title={title} />
       <SubjectMetaData metaData={getMetaData()} />
-      <QuestionList questions={questions} />
+      <QuestionList questions={questions} {...other} />
     </section>
   );
 }
