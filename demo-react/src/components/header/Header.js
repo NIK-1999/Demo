@@ -1,6 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styles from './Header.module.css';
-import CountDownTimer from './CountDownTimer';
+import CountDownTimer from './count_down_timer/CountDownTimer';
 
 function Header(props) {
   return (
@@ -14,5 +15,11 @@ function Header(props) {
     </div>
   );
 }
+
+Header.propTypes = {
+  testDuration: PropTypes.number.isRequired,
+  endTest: PropTypes.func,
+  setTimerId: PropTypes.func,
+};
 
 export default Header;

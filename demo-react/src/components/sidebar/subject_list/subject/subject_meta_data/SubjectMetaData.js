@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styles from './SubjectMetaData.module.css';
 
 function SubjectMetaData(props) {
@@ -20,5 +21,17 @@ function SubjectMetaData(props) {
     </ul>
   );
 }
+
+SubjectMetaData.propTypes = {
+  metaData: PropTypes.shape({
+    answeredQuestion: PropTypes.number.isRequired,
+    markedQuestion: PropTypes.number.isRequired,
+    unAnsweredQuestion: PropTypes.number.isRequired,
+  }),
+};
+
+SubjectMetaData.defaultProps = {
+  metaData: {},
+};
 
 export default SubjectMetaData;

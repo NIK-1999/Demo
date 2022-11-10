@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 
 function CountDownTimer(props) {
   const [duration, setDuration] = useState(props.duration);
@@ -42,5 +43,17 @@ function CountDownTimer(props) {
 
   return <p>{remainingTime}</p>;
 }
+
+CountDownTimer.propTypes = {
+  duration: PropTypes.number.isRequired,
+  onTimeUp: PropTypes.func,
+  setTimerId: PropTypes.func,
+};
+
+CountDownTimer.defaultProps = {
+  duration: 0,
+  onTimeUp: () => {},
+  setTimerId: (timerId) => {},
+};
 
 export default CountDownTimer;

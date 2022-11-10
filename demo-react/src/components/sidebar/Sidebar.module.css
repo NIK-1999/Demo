@@ -1,0 +1,29 @@
+.container {
+  box-sizing: border-box;
+  padding: 0 2%;
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.1);
+}
+
+.testDetails {
+  margin-bottom: 10%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.testDetails > h4 {
+  margin: 5% 0;
+  font-weight: normal;
+}
+
+.endTestButton {
+  margin: 3% 3% 3% auto;
+  padding: 2% 4%;
+  color: #cc0000;
+  background: #fff;
+  border-radius: 5px;
+  border: 1px solid black;
+  font-weight: bold;
+}

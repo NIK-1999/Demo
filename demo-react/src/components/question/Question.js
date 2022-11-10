@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styles from './Question.module.css';
 
 function Question(props) {
@@ -34,5 +35,19 @@ function Question(props) {
     </>
   );
 }
+
+Question.propTypes = {
+  question: PropTypes.shape({
+    question: PropTypes.string.isRequired,
+    answers: PropTypes.arrayOf(PropTypes.string).isRequired,
+    correctAnswer: PropTypes.number.isRequired,
+  }),
+  answerQuestion: PropTypes.func.isRequired,
+};
+
+Question.defaultProps = {
+  question: {},
+  answerQuestion: (ans) => {},
+};
 
 export default Question;
